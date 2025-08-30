@@ -1,7 +1,6 @@
 # Arquivo Principal
 
 from services.api_collector import collect_data
-from services.db_manager import save_to_postgres
 
 def main():
     """

@@ -7,7 +7,7 @@ import pandas as pd
 
 def save_to_postgres(df: pd.DataFrame, table_name: str):
     """
-    Saves a pandas DataFrame to a PostgreSQL table.
+    Salva os dados em uma tabela.
     """
     for col in df.columns:
         df[col] = df[col].apply(lambda x: str(x) if isinstance(x, (dict, list)) else x)
@@ -38,11 +38,6 @@ def fetch_data_from_db(sql_query: str) -> pd.DataFrame:
     """
     Executa uma consulta SQL no banco de dados e retorna os resultados em um DataFrame do Pandas.
     
-    Args:
-        sql_query (str): A consulta SQL a ser executada.
-        
-    Returns:
-        pd.DataFrame: Um DataFrame com os resultados da consulta ou um DataFrame vazio em caso de erro.
     """
     con = None
     df = pd.DataFrame()
