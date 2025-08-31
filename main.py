@@ -1,6 +1,6 @@
 # Arquivo Principal
 
-from services.api_collector import collect_data
+from src.services.api_collector import collect_data
 
 def main():
     """
