@@ -1,6 +1,6 @@
 consulta_sql = '''
 
-SELECT "chaveNotaFiscal",
+SELECT "id",
        "orgaoDestinatario",
        "nomeFornecedor",
        "cnpjFornecedor",
@@ -8,7 +8,8 @@ SELECT "chaveNotaFiscal",
        "itensNotaFiscal",
        "tipoEventoMaisRecente",
        "dataEmissao",
-       "eventosNotaFiscal"
+       "eventosNotaFiscal",
+       "chaveNotaFiscal"
 FROM notas_fiscais;
 
 '''

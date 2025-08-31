@@ -6,9 +6,9 @@ def main():
     """
     Função principal para orquestrar o processo de coleta e salvamento de dados.
     """
-    code = "36000"
+    code = "46000"
     table = "notas_fiscais"
-    total_pages = 3
+    total_pages = 1221
 
     print(f"Iniciando a coleta de dados para o código {code}...")
 

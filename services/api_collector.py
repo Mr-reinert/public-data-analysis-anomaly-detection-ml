@@ -38,7 +38,7 @@ def fetch_note_details(note: Dict[str, Any]) -> Dict[str, Any]:
         time.sleep(0.3)
     return note
 
-def collect_data(code: str, table: str, start_page: int = 1, end_page: int = 30000) -> None:
+def collect_data(code: str, table: str, start_page: int = 1, end_page: int = 1221) -> None:
     """
     Coleta dados da API, incluindo os detalhes de cada nota fiscal,
     e salva no banco de dados página por página.
