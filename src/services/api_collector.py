@@ -15,7 +15,7 @@ def fetch_notes(code: str, page: int) -> List[Dict[str, Any]]:
     """
     params = {"codigoOrgao": code, "pagina": page}
     try:
-        response = requests.get(BASE_URL_NF, headers=HEADERS, params=params, timeout=(10, 120))
+        response = requests.get(BASE_URL_NF, headers=HEADERS, params=params, timeout=(1, 50))
         response.raise_for_status()
         return response.json()
     except requests.exceptions.RequestException as e:
@@ -32,7 +32,7 @@ def fetch_note_details(note: Dict[str, Any]) -> Dict[str, Any]:
 
     params = {"chaveUnicaNotaFiscal": key}
     try:
-        response = requests.get(BASE_URL_CHNF, headers=HEADERS, params=params, timeout=(10, 60))
+        response = requests.get(BASE_URL_CHNF, headers=HEADERS, params=params, timeout=(1, 50))
         response.raise_for_status()
         note.update(response.json())
     except requests.exceptions.RequestException as e:
@@ -41,7 +41,7 @@ def fetch_note_details(note: Dict[str, Any]) -> Dict[str, Any]:
         time.sleep(0.3)
     return note
 
-def collect_data(code: str, table: str, start_page: int = 1, end_page: int = 1221) -> None:
+def collect_data(code: str, table: str, start_page: int = 1, end_page: int = 33000) -> None:
     """
     Coleta dados da API, incluindo os detalhes de cada nota fiscal,
     e salva no banco de dados página por página.
