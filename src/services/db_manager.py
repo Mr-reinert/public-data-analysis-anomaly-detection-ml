@@ -47,7 +47,7 @@ def fetch_data_from_db(sql_query: str) -> pd.DataFrame:
         # A conexão é estabelecida diretamente usando o dicionário DB_CONFIG importado
         con = psycopg2.connect(**DB_CONFIG)
         cursor = con.cursor()
-        
+         
         cursor.execute(sql_query)
         
         columns = [desc[0] for desc in cursor.description]
