@@ -1,3 +1,5 @@
+data/processed
+data/processed_isolation_forest
+model/
 .ipynb_checkpoints*
 .conda*
-processed_data/*
