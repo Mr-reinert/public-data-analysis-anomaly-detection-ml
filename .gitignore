@@ -1,5 +1,6 @@
 data/processed
 data/processed_isolation_forest
+data/processed_DBSCAN_final
 model/
 .ipynb_checkpoints*
 .conda*
