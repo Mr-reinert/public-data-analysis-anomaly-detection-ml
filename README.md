@@ -1,6 +1,6 @@
 # Análise de Dados Públicos e Detecção de Anomalias com Isolation Forest
 
-Este projeto de Trabalho de Conclusão de Curso (TCC) apresenta um pipeline completo de **Engenharia de Dados** e **Machine Learning** focado na coleta, processamento e análise de dados públicos de notas fiscais para a **detecção de anomalias**. A metodologia central utiliza o algoritmo **Isolation Forest** para identificar padrões incomuns ou potencialmente fraudulentos em transações.
+Este projeto apresenta um pipeline completo de **Engenharia de Dados** e **Machine Learning** focado na coleta, processamento e análise de dados públicos de notas fiscais para a **detecção de anomalias**. A metodologia central utiliza o algoritmo **Isolation Forest** para identificar padrões incomuns ou potencialmente fraudulentos em transações.
 
 ## 1. Visão Geral do Projeto
 
