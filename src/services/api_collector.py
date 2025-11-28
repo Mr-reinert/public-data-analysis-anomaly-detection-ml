@@ -7,9 +7,9 @@ import requests
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-MAX_RETRIES = 3
-PAGE_WORKERS = 5       # << NOVO: Número de threads para buscar PÁGINAS
-DETAILS_WORKERS = 15   # << Aumentado: Número de threads para buscar DETALHES
+MAX_RETRIES = 3        # Número máximo de tentativas para cada requisição
+PAGE_WORKERS = 5       # Número de threads para buscar PÁGINAS
+DETAILS_WORKERS = 15   # Número de threads para buscar DETALHES
 
 def fetch_notes(session: requests.Session, code: str, page: int, retries: int = MAX_RETRIES) -> List[Dict[str, Any]]:
     """Busca uma página de notas fiscais da API usando uma session."""
@@ -96,8 +96,8 @@ def collect_data(code: str, table: str, start_page: int = 1, end_page: int = 309
                 try:
                     df = future.result()
                     if not df.empty:
-                        print(f"💾 Salvando dados da página {page_num} no banco...")
+                        print(f"Salvando dados da página {page_num} no banco...")
                         save_to_postgres(df, table)
-                        print(f"✔️ Dados da página {page_num} salvos.")
+                        print(f"Dados da página {page_num} salvos.")
                 except Exception as exc:
                     print(f"Página {page_num} gerou uma exceção: {exc}")
