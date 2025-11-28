@@ -1,136 +1,112 @@
-# Análise de Dados Públicos e Detecção de Anomalias com Machine Learning
+# Análise de Dados Públicos e Detecção de Anomalias com Isolation Forest
 
-Este projeto tem como objetivo coletar, processar e analisar dados públicos relacionados a notas fiscais, com foco na detecção de anomalias utilizando algoritmos de Machine Learning.  
-A aplicação integra coleta automática de dados via API, armazenamento em banco de dados relacional e análises exploratórias e preditivas com modelos de aprendizado não supervisionado como **Isolation Forest** e **DBSCAN**.  
-O projeto serve como uma base sólida para estudos e aplicações práticas em detecção de fraudes e padrões atípicos em dados transacionais de grande escala.
+Este projeto apresenta um pipeline completo de **Engenharia de Dados** e **Machine Learning** focado na coleta, processamento e análise de dados públicos de notas fiscais para a **detecção de anomalias**. A metodologia central utiliza o algoritmo **Isolation Forest** para identificar padrões incomuns ou potencialmente fraudulentos em transações.
 
----
+## 1. Visão Geral do Projeto
 
-## Estrutura do Projeto
+O objetivo principal é construir uma base de dados robusta a partir da API do Portal da Transparência e aplicar um modelo de *Machine Learning* não supervisionado para sinalizar transações que se desviam significativamente do comportamento normal.
 
-O projeto está organizado da seguinte forma:
+### 1.1. Metodologia de Detecção de Anomalias
 
-<img width="293" height="684" alt="image" src="https://github.com/user-attachments/assets/3035b832-faae-4c3a-aa9e-62d81a3737ba" />
+O projeto adota o **Isolation Forest** como principal ferramenta de detecção de anomalias.
 
+> O Isolation Forest é um algoritmo baseado em árvores que isola anomalias (pontos raros e distintos) com muito mais facilidade do que os pontos normais. Ele mede a anomalia de uma observação pela profundidade média do caminho necessário para isolá-la em uma floresta de árvores aleatórias.
 
-### Descrição dos Diretórios e Arquivos Principais
+O modelo é aplicado no nível da nota fiscal, utilizando *features* enriquecidas (incluindo dados demográficos do IBGE e *features* temporais) para uma análise multidimensional.
 
-* **`data/`** — Contém os dados utilizados no projeto.  
-  * `raw/`: Dados brutos coletados de fontes externas (como o Portal da Transparência e IBGE).  
-  * `processed/`: Dados limpos e tratados, prontos para análise ou modelagem.
+## 2. Arquitetura e Estrutura do Código
 
-* **`main.py`** — Script principal responsável por orquestrar a coleta, o processamento e o salvamento dos dados no banco de dados.
+A estrutura do projeto segue o padrão de organização de projetos de *Data Science* (DS), garantindo modularidade e clareza.
 
-* **`notebooks/`** — Contém notebooks Jupyter para análise exploratória e modelagem de anomalias:  
-  * `1_data_preprocessing.ipynb`: Processamento e limpeza de dados, com criação de features e normalização.  
-  * `2_Isolation_forest.ipynb`: Implementação e análise de anomalias com o modelo **Isolation Forest**.  
-  * `3_DBSCAN.ipynb`: Aplicação do algoritmo **DBSCAN (Density-Based Spatial Clustering)** para detectar padrões e outliers com base em densidade.
+```
+.
+├── data/
+│   ├── processed/              # Dados limpos e prontos para ML
+│   ├── raw/                    # Dados brutos (ex: ibge_municipios.csv)
+├── model/
+│   ├── isolation_forest_model.joblib # Modelo treinado do Isolation Forest
+│   ├── model_features.txt      # Lista de features usadas no treinamento
+├── notebooks/
+│   ├── 1_data_preprocessing.ipynb # Pré-processamento e Engenharia de Features
+│   ├── 2_Isolation_forest.ipynb   # Treinamento e Avaliação do Modelo
+├── src/
+│   ├── config/                 # Configurações (API, Banco de Dados, Constantes)
+│   ├── services/               # Lógica de Negócio (Coleta de API, Gerenciamento de DB)
+│   ├── utils/                  # Funções Utilitárias (Limpeza de Dados, Conversão)
+├── main.py                     # Ponto de entrada para orquestração da coleta
+├── requirements.txt            # Dependências Python
+└── README.md                   # Este arquivo
+```
 
-* **`src/`** — Código-fonte da aplicação, modularizado em três camadas:
-  * **`config/`** — Configurações gerais do sistema:
-    * `api.py`: Configuração e chave de autenticação da API.  
-    * `const.py`: Constantes e parâmetros fixos da aplicação.  
-    * `database.py`: Conexão e configuração do banco de dados PostgreSQL.  
-  * **`services/`** — Camada de serviços e integração com fontes externas:
-    * `api_collector.py`: Lida com a coleta de dados do Portal da Transparência.  
-    * `db_manager.py`: Manipula conexões, inserções e consultas ao banco de dados.  
-  * **`utils/`** — Funções auxiliares de limpeza e manipulação:
-    * `data_cleaning.py`: Limpeza, normalização e tratamento de dados.  
-    * `number_utils.py`: Conversões de formatos numéricos brasileiros e padronização.
+## 3. Tecnologias e Ferramentas
 
----
+| Categoria | Ferramenta/Tecnologia | Função no Projeto |
+| :--- | :--- | :--- |
+| **Linguagem** | Python | Linguagem principal para desenvolvimento e análise. |
+| **Coleta de Dados** | `requests` | Requisições HTTP para a API do Portal da Transparência. |
+| **Processamento** | `pandas`, `numpy` | Manipulação, limpeza e Engenharia de Features. |
+| **Machine Learning** | `scikit-learn` | Implementação do algoritmo **Isolation Forest**. |
+| **Persistência** | PostgreSQL, `psycopg2` | Banco de dados relacional para armazenamento dos dados coletados. |
+| **Infraestrutura** | Servidor Linux Caseiro | Ambiente de execução e hospedagem do banco de dados. |
 
-## Configuração e Uso
+## 4. Fluxo de Execução (Pipeline)
+
+O projeto é executado em três fases principais:
+
+1.  **Coleta de Dados (main.py):**
+    *   O script `main.py` orquestra a coleta de dados da API do Portal da Transparência.
+    *   A coleta é realizada de forma **paralela** e **resiliente** (`src/services/api_collector.py`) para lidar com o grande volume de dados e a latência da rede.
+    *   Os dados brutos são salvos diretamente no banco de dados PostgreSQL (`src/services/db_manager.py`).
+2.  **Pré-processamento (1_data_preprocessing.ipynb):**
+    *   Os dados são carregados do PostgreSQL.
+    *   É realizada a limpeza de dados (`src/utils/data_cleaning.py`) e a conversão de formatos brasileiros (`src/utils/number_utils.py`).
+    *   São criadas *features* avançadas (temporais, de razão, etc.) e o conjunto de dados é preparado para o modelo de ML.
+3.  **Modelagem e Análise (2_Isolation_forest.ipynb):**
+    *   O modelo **Isolation Forest** é treinado no conjunto de dados pré-processado.
+    *   As notas fiscais são classificadas como **normais** ou **anômalas** com base no *score* de isolamento.
+    *   O *notebook* inclui a avaliação do modelo com métricas adequadas para dados desbalanceados (ex: F1-Score, Precisão e Recall).
+
+## 5. Configuração e Uso
+
+Para configurar e executar o projeto, siga os passos abaixo:
 
 ### Pré-requisitos
 
-Antes de começar, é necessário ter instalado:
-- **Python 3.8+**
-- **PostgreSQL**  
-- **pip** (gerenciador de pacotes Python)
-
-Certifique-se de configurar corretamente as credenciais de banco e da API.
-
----
+*   Python 3.8+
+*   PostgreSQL (configurado e acessível, conforme `src/config/database.py`)
 
 ### Instalação
 
-1. **Clone o repositório:**
-   ```bash
-   git clone https://github.com/seu-usuario/public-data-analysis-anomaly-detection-ml.git
-   cd public-data-analysis-anomaly-detection-ml
-Crie e ative um ambiente virtual (recomendado):
+1.  **Clone o repositório:**
+    ```bash
+    git clone [URL_DO_SEU_REPOSITORIO]
+    cd public-data-analysis-anomaly-detection-ml
+    ```
+2.  **Instale as dependências:**
+    ```bash
+    pip install -r requirements.txt
+    ```
+3.  **Configuração:**
+    *   Atualize as credenciais do PostgreSQL em `src/config/database.py`.
+    *   Atualize a chave da API do Portal da Transparência em `src/config/api.py`.
 
-bash
-Copiar código
-python -m venv venv
-source venv/bin/activate  # No Windows: venv\Scripts\activate
-Instale as dependências:
+### Execução da Coleta
 
-bash
-Copiar código
-pip install -r requirements.txt
-Configure o banco de dados:
-Edite o arquivo src/config/database.py com as suas credenciais do PostgreSQL:
+Para iniciar a coleta de dados e salvá-los no PostgreSQL:
 
-python
-Copiar código
-DB_CONFIG = {
-    "host": "localhost",
-    "port": 5432,
-    "dbname": "notas_db",
-    "user": "postgres",
-    "password": "postgres"
-}
-Configure a chave da API:
-Edite o arquivo src/config/api.py:
-
-python
-Copiar código
-API_KEY = "SUA_CHAVE_DA_API"
-Execução
-Para iniciar o processo de coleta e armazenamento de dados:
-
-bash
-Copiar código
+```bash
 python main.py
-O script coleta os dados da API pública, processa e armazena as informações no banco de dados PostgreSQL, prontos para análise.
+```
 
-Análise de Dados e Modelagem
-Após coletar e preparar os dados, utilize os notebooks para explorar e modelar as anomalias:
+### Análise e Modelagem
 
-bash
-Copiar código
-jupyter notebook notebooks/
-Os notebooks abordam:
+Para realizar o pré-processamento e treinar o modelo de ML, abra os *notebooks* Jupyter na ordem:
 
-Pré-processamento e limpeza dos dados.
+```bash
+jupyter notebook notebooks/1_data_preprocessing.ipynb
+jupyter notebook notebooks/2_Isolation_forest.ipynb
+```
 
-Combinação de datasets (notas fiscais e dados demográficos).
+## 6. Contribuição
 
-Aplicação dos algoritmos Isolation Forest e DBSCAN.
-
-Interpretação dos resultados e visualização de outliers.
-
-Tecnologias e Bibliotecas Principais
-Python 3.8+
-
-Pandas — Manipulação de dados.
-
-NumPy — Cálculos numéricos.
-
-Scikit-learn — Modelagem e detecção de anomalias.
-
-Matplotlib / Seaborn — Visualização de dados.
-
-SQLAlchemy / psycopg2 — Integração com PostgreSQL.
-
-Requests — Coleta de dados via API.
-
-## Contribuição
-
-Contribuições são bem-vindas! Sinta-se à vontade para abrir issues, enviar pull requests ou sugerir melhorias.
-
-## Licença
-
-Este projeto está licenciado sob a licença MIT. Consulte o arquivo `LICENSE` para mais detalhes.
+Contribuições são bem-vindas! Sinta-se à vontade para abrir *issues* ou enviar *pull requests*.
